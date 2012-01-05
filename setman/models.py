@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.translation import ugettext as __, ugettext_lazy as _
-from django.utils.encoding import force_unicode
 
 from setman.fields import SettingsField
 from setman.managers import CACHE_KEY, SettingsManager

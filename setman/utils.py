@@ -432,6 +432,18 @@ class SettingsContainer(object):
             setattr(self, name, value)
 
 
+class LazySettingsContainer(object):
+    def __init__(self):
+        self.data = None
+
+    def __getattr__(self, attr):
+        if attr.startswith('_') and attr not in ('__iter__', '__len__'):
+            return super(LazySettingsContainer, self).__getattr__(attr)
+        if self.data is None:
+            self.data = parse_configs()
+        return getattr(self.data, attr)
+
+
 def auth_permitted(user):
     """
     Check that the user can have access to the view.
@@ -496,7 +508,8 @@ def is_settings_container(value):
     except:
         klass_name = ''
 
-    return isinstance(value, SettingsContainer) or klass_name == 'LazySettings'
+    return (isinstance(value, (SettingsContainer, LazySettingsContainer))
+            or klass_name == 'LazySettings')
 
 
 def load_from_path(path):
@@ -682,4 +695,4 @@ def update_app_setting(setting, data):
     return setting
 
 
-AVAILABLE_SETTINGS = parse_configs()
+AVAILABLE_SETTINGS = LazySettingsContainer()
