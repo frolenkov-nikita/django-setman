@@ -434,13 +434,20 @@ class SettingsContainer(object):
 
 class LazySettingsContainer(object):
     def __init__(self):
-        self.data = None
+        self._data = None
+
+    @property
+    def data(self):
+        if self._data is None:
+            self._data = parse_configs()
+        return self._data
+
+    def __iter__(self):
+        return iter(self.data)
 
     def __getattr__(self, attr):
-        if attr.startswith('_') and attr not in ('__iter__', '__len__'):
+        if attr.startswith('_'):
             return super(LazySettingsContainer, self).__getattr__(attr)
-        if self.data is None:
-            self.data = parse_configs()
         return getattr(self.data, attr)
 
 

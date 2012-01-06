@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
-from django.utils.translation import ugettext as __, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from setman.fields import SettingsField
 from setman.managers import CACHE_KEY, SettingsManager
@@ -47,7 +47,7 @@ class Settings(models.Model):
     objects = SettingsManager()
 
     class Meta:
-        app_label = app_label_title('setman', __('Settings Manager'))
+        app_label = app_label_title('setman', _('Settings Manager'))
         verbose_name = _('settings')
         verbose_name_plural = _('settings')
 
@@ -73,7 +73,7 @@ class Settings(models.Model):
         self.data[name] = value
 
     def __unicode__(self):
-        return __('Project settings')
+        return _('Project settings')
 
     def is_setting_name(self, name):
         """

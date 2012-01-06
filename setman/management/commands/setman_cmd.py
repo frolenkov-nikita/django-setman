@@ -1,13 +1,5 @@
 import logging
-import sys
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-
 from optparse import make_option
-
 from django.core.management.base import NoArgsCommand
 
 from setman.models import Settings
