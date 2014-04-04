@@ -1,10 +1,14 @@
 from django.conf import settings as django_settings
+from django.core.cache import cache
 
 from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
 
 
 __all__ = ('LazySettings', )
+
+
+CACHE_KEY = 'setman__custom_cache'
 
 
 class LazySettings(object):
@@ -24,12 +28,15 @@ class LazySettings(object):
 
     def __delattr__(self, name):
         if name.startswith('_'):
-            return super(LazySettings, self).__delattr__(name)
+            return self._safe_super_method('__delattr__', name)
 
         if hasattr(django_settings, name):
             delattr(django_settings, name)
         else:
-            delattr(self._custom, name)
+            custom = self._custom
+            delattr(custom, name)
+            custom.save()
+            cache.delete(CACHE_KEY)
 
     def __getattr__(self, name):
         """
@@ -40,7 +47,7 @@ class LazySettings(object):
         available setting from configuration definition file if any.
         """
         if name.startswith('_'):
-            return super(LazySettings, self).__getattr__(name)
+            return self._safe_super_method('__getattr__', name)
 
         data, prefix = self._custom.data, self._prefix
 
@@ -70,22 +77,28 @@ class LazySettings(object):
         Add support of setting values to settings as instance attribute.
         """
         if name.startswith('_'):
-            return super(LazySettings, self).__setattr__(name, value)
+            return self._safe_super_method('__setattr__', name, value)
 
         # First of all try to setup value to Django setting
         if hasattr(django_settings, name):
             setattr(django_settings, name, value)
         # Then setup value to project setting
         elif not self._prefix:
-            setattr(self._custom, name, value)
+            custom = self._custom
+            setattr(custom, name, value)
+            custom.save()
+            cache.delete(CACHE_KEY)
         # And finally setup value to app setting
         else:
-            data, prefix = self._custom.data, self._prefix
+            custom = self._custom
+            data, prefix = custom.data, self._prefix
 
             if not prefix in data:
                 data[prefix] = {}
 
             data[prefix].update({name: value})
+            custom.save()
+            cache.delete(CACHE_KEY)
 
     def revert(self):
         """
@@ -103,18 +116,24 @@ class LazySettings(object):
         """
         Clear custom settings cache.
         """
-        if hasattr(self, '_custom_cache'):
-            delattr(self, '_custom_cache')
+        if CACHE_KEY in cache:
+            cache.delete(CACHE_KEY)
 
     @property
     def _custom(self):
+        """
+        Read custom settings from database and store it to the instance cache.
+        """
         if self._parent:
             return self._parent._custom
 
-        if not hasattr(self, '_custom_cache'):
-            setattr(self, '_custom_cache', self._get_custom_settings())
+        from_cache = cache.get(CACHE_KEY)
+        if not from_cache:
+            custom = self._get_custom_settings()
+            cache.set(CACHE_KEY, custom)
+            return custom
 
-        return getattr(self, '_custom_cache')
+        return from_cache
 
     def _get_custom_settings(self):
         """
@@ -124,3 +143,21 @@ class LazySettings(object):
             return Settings.objects.get()
         except Settings.DoesNotExist:
             return Settings.objects.create(data={})
+
+    def _safe_super_method(self, method, *args, **kwargs):
+        """
+        Execute super ``method`` and format fancy error message on
+        ``AttributeError``.
+        """
+        klass = self.__class__
+
+        try:
+            method = getattr(super(klass, self), method)
+        except AttributeError:
+            args = (
+                klass.__name__,
+                args[0] if method.endswith('attr__') else method
+            )
+            raise AttributeError('%r object has no attribute %r' % args)
+        else:
+            return method(*args, **kwargs)
