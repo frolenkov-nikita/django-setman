@@ -16,7 +16,6 @@ class LazySettings(object):
     Simple proxy object that accessed database only when user needs to read
     some setting.
     """
-    __slots__ = ('_custom_cache', '_settings', '_parent', '_prefix')
 
     def __init__(self, settings=None, prefix=None, parent=None):
         """
