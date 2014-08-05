@@ -1,4 +1,7 @@
 from django.conf import settings as django_settings
+
+django_settings.configure()
+
 from django.core.cache import cache
 
 from setman.models import Settings
