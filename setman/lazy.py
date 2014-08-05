@@ -1,6 +1,9 @@
 from django.conf import settings as django_settings
 
-django_settings.configure()
+try:
+    django_settings.configure()
+except RuntimeError:
+    pass
 
 from django.core.cache import cache
 
