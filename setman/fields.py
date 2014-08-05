@@ -2,7 +2,7 @@ from django.conf import settings as django_settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
-import simplejson
+import json as simplejson
 
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
 
