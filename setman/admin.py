@@ -34,7 +34,7 @@ class SettingsAdmin(admin.ModelAdmin):
         functional of "Edit Settings" page without including ``setman.urls``
         patterns into root URLConf module.
         """
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
 
         urlpatterns = patterns('setman.views',
             url(r'^revert/$', 'revert', name='setman_settings_revert'),
