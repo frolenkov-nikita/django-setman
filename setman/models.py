@@ -13,22 +13,6 @@ from setman.utils import AVAILABLE_SETTINGS, is_settings_container
 __all__ = ('Settings', )
 
 
-class app_label_title(str):
-    """
-    Simple fake for showing human readable values as app label in Django admin.
-    """
-    def __new__(cls, value, title):
-        instance = str.__new__(cls, value)
-        instance._title = title
-        return instance
-
-    def title(self):
-        return self._title
-
-    __copy__ = lambda self: self
-    __deepcopy__ = lambda self, *args: self
-
-
 class Settings(models.Model):
     """
     Store all custom project settings in ``data`` field as ``json`` dump.
@@ -47,7 +31,6 @@ class Settings(models.Model):
     objects = SettingsManager()
 
     class Meta:
-        app_label = app_label_title('setman', _('Settings Manager'))
         verbose_name = _('settings')
         verbose_name_plural = _('settings')
 
