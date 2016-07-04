@@ -7,7 +7,7 @@ except RuntimeError:
 
 from django.core.cache import cache
 
-from cached_property import threaded_cached_property_with_ttl
+from expiringdict import ExpiringDict
 
 from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
@@ -32,6 +32,7 @@ class LazySettings(object):
         self._settings = settings or AVAILABLE_SETTINGS
         self._parent = parent
         self._prefix = prefix
+        self._cache = ExpiringDict(max_len=20, max_age_seconds=10)
 
     def __delattr__(self, name):
         if name.startswith('_'):
@@ -45,17 +46,7 @@ class LazySettings(object):
             custom.save()
             cache.delete(CACHE_KEY)
 
-    def __getattr__(self, name):
-        """
-        Add support for getting settings keys as instance attribute.
-
-        For first try, method tries to read settings from database, then from
-        Django settings and if all fails try to return default value of
-        available setting from configuration definition file if any.
-        """
-        if name.startswith('_'):
-            return self._safe_super_method('__getattr__', name)
-
+    def _get_setting_value(self, name):
         data, prefix = self._custom.data, self._prefix
 
         # Read app setting from database
@@ -78,6 +69,26 @@ class LazySettings(object):
 
         # If cannot read setting - raise error
         raise AttributeError('Settings has not attribute %r' % name)
+
+    def __getattr__(self, name):
+        """
+        Add support for getting settings keys as instance attribute.
+
+        For first try, method tries to read settings from database, then from
+        Django settings and if all fails try to return default value of
+        available setting from configuration definition file if any.
+        """
+        if name.startswith('_'):
+            return self._safe_super_method('__getattr__', name)
+
+        from_cache = self._cache.get(name, None)
+
+        if from_cache is None:
+            value = self._get_setting_value(name)
+            self._cache[name] = value
+            return value
+        else:
+            return from_cache
 
     def __setattr__(self, name, value):
         """
