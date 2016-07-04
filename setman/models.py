@@ -56,7 +56,7 @@ class Settings(models.Model):
         self.data[name] = value
 
     def __unicode__(self):
-        return _('Project settings')
+        return 'Project settings'
 
     def is_setting_name(self, name):
         """
