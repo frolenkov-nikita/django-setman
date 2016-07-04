@@ -32,7 +32,8 @@ class LazySettings(object):
         self._settings = settings or AVAILABLE_SETTINGS
         self._parent = parent
         self._prefix = prefix
-        self._cache = ExpiringDict(max_len=20, max_age_seconds=10)
+        self._cache = ExpiringDict(max_len=20,
+                max_age_seconds=django_settings.SETMAN_INTERNAL_CACHE_TIMEOUT)
 
     def __delattr__(self, name):
         if name.startswith('_'):
