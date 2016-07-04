@@ -7,6 +7,8 @@ except RuntimeError:
 
 from django.core.cache import cache
 
+from cached_property import threaded_cached_property_with_ttl
+
 from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
 
@@ -124,7 +126,7 @@ class LazySettings(object):
         if CACHE_KEY in cache:
             cache.delete(CACHE_KEY)
 
-    @property
+    @threaded_cached_property_with_ttl(ttl=30)
     def _custom(self):
         """
         Read custom settings from database and store it to the instance cache.

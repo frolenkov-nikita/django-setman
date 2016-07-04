@@ -38,4 +38,5 @@ setup(
     ],
     keywords='django settings manager',
     license='BSD License',
+    requires='cached_property',
 )
