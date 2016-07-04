@@ -128,6 +128,7 @@ class LazySettings(object):
 
     #@threaded_cached_property_with_ttl(
     #    ttl=getattr(django_settings, 'SETMAN_PROPERTY_CACHE_TIMEOUT', 30))
+    @property
     def _custom(self):
         """
         Read custom settings from database and store it to the instance cache.
