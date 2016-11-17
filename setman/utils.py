@@ -2,6 +2,8 @@ import copy
 import logging
 import os
 import re
+import importlib
+from collections import OrderedDict as SortedDict
 
 try:
     from cStringIO import StringIO
@@ -13,9 +15,7 @@ from decimal import Decimal
 
 from django import forms
 from django.conf import settings as django_settings
-from django.db.models.loading import get_apps, get_model
-from django.utils import importlib
-from django.utils.datastructures import SortedDict
+from django.apps import apps
 
 
 __all__ = ('AVAILABLE_SETTINGS', 'auth_permitted', 'parse_config')
@@ -258,7 +258,7 @@ class ChoiceSetting(Setting):
             except ValueError:
                 pass
             else:
-                model = get_model(app, model)
+                model = apps.get_model(app, model)
 
             # If cannot process path as ``app.Model`` just load it as module
             # or as class from module
@@ -653,16 +653,15 @@ def parse_configs():
 
     # Then try to load all available configuration definition files from all
     # installed apps
-    apps = get_apps()
+    models_modules = [a.module for a in apps.get_app_configs()]
 
     # Don't forget to read pathes to app configuration definition files from
     # Django settings
     pathes = getattr(django_settings, 'SETMAN_SETTINGS_FILES', {})
-
-    for app in apps:
-        app_name = app.__name__.split('.')[-2]
+    for app in models_modules:
+        app_name = app.__name__.split('.')[-1]
         path = pathes.get(app_name, DEFAULT_SETTINGS_FILENAME)
-
+        print pathes
         if not os.path.isabs(path):
             dirname = os.path.dirname(app.__file__)
             path = os.path.join(dirname, path)
@@ -680,6 +679,7 @@ def parse_configs():
 
     settings = parse_config(path, additional_types, default_values,
                             all_settings=all_settings)
+
     all_settings.add('__project__', settings)
     all_settings.path = settings.path
 

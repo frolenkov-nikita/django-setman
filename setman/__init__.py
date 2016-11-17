@@ -1,6 +1,7 @@
 try:
     from setman.lazy import LazySettings
 except ImportError:
+    raise
     # Do not care about "Settings cannot be imported, because environment
     # variable DJANGO_SETTINGS_MODULE is undefined." errors
     LazySettings = type('LazySettings', (object, ), {})

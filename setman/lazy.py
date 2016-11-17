@@ -6,10 +6,9 @@ except RuntimeError:
     pass
 
 from django.core.cache import cache
-
+from django.apps import apps
 from expiringdict import ExpiringDict
 
-from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
 
 
@@ -161,6 +160,8 @@ class LazySettings(object):
         """
         Do not read any settings before post_syncdb signal is called.
         """
+        Settings = apps.get_model('setman', 'Settings')
+
         try:
             return Settings.objects.get()
         except Settings.DoesNotExist:
