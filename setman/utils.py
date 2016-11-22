@@ -661,7 +661,6 @@ def parse_configs():
     for app in models_modules:
         app_name = app.__name__.split('.')[-1]
         path = pathes.get(app_name, DEFAULT_SETTINGS_FILENAME)
-        print pathes
         if not os.path.isabs(path):
             dirname = os.path.dirname(app.__file__)
             path = os.path.join(dirname, path)
