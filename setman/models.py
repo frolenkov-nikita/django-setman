@@ -29,6 +29,7 @@ class Settings(models.Model):
     update_date = models.DateTimeField(_('updated at'), auto_now=True)
 
     objects = SettingsManager()
+    default_manager = models.Manager()
 
     class Meta:
         verbose_name = _('settings')
@@ -91,8 +92,7 @@ class Settings(models.Model):
         Check that no else ``Settings`` insances has been created.
         """
         lookup = {} if not self.pk else {'pk': self.pk}
-        counter = self._default_manager.exclude(**lookup).count()
-
+        counter = Settings.default_manager.exclude(**lookup).count()
         if counter != 0:
             raise ValidationError('Only one Settings instance could be ' \
                                   'created.')
@@ -106,8 +106,8 @@ def clear_settings_cache(instance, **kwargs):
     Clear settings cache if any.
     """
     from setman import settings
-    settings._clear()
 
+    settings._clear()
     if CACHE_KEY in cache:
         cache.delete(CACHE_KEY)
 
@@ -124,7 +124,6 @@ def validate_settings(instance, **kwargs):
         # re-save already existed instance (it's okay cause we didn't operate
         # with instance directly read from database, we got instance field data
         # from the cache)
-        if hasattr(error, 'message_dict') and \
-           error.message_dict.keys() == ['id']:
+        if hasattr(error, 'message_dict') and error.message_dict.keys() == ['id']:
             return
         raise

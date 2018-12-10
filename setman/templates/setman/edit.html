@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+
 {% block title %}{{ _("Edit Settings") }}{% endblock %}
 {% block content_title %}{{ _("Edit Settings") }}{% endblock %}
 {% block content %}
@@ -33,11 +33,11 @@
 
         <p class="buttons">
             <button type="submit">{{ _("Submit") }}</button>
-            <button><a href="{% url setman_revert %}" title="{{ _("Revert all settings to default values") }}">{{ _("Revert") }}</a></button>
+            <button><a href="{{ url("setman_revert") }}" title="{{ _("Revert all settings to default values") }}">{{ _("Revert") }}</a></button>
         </p>
     </form>
 
-    <p>{% url home as home_url %}{% blocktrans %}Back to <a href="{{ home_url }}">home page</a>.{% endblocktrans %}</p>
+    <p>{% blocktrans %}Back to <a href="{{ url('home_url') }}">home page</a>.{% endblocktrans %}</p>
     {% endif %}
 
 {% endblock %}

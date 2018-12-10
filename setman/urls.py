@@ -1,7 +1,8 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import url
 
+import views
 
-urlpatterns = patterns('setman.views',
-    url(r'^$', 'edit', name='setman_edit'),
-    url(r'^revert/$', 'revert', name='setman_revert'),
-)
+urlpatterns = [
+    url(r'^$', views.edit, name='setman_edit'),
+    url(r'^revert/$', views.revert, name='setman_revert'),
+]

@@ -1,5 +1,5 @@
 from django import forms
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict as SortedDict
 
 from setman import settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container

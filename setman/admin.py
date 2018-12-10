@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin.options import csrf_protect_m
 
 from setman.models import Settings
-from setman.views import edit
+from setman.views import edit, revert
 from setman.utils import auth_permitted
 
 
@@ -34,11 +34,11 @@ class SettingsAdmin(admin.ModelAdmin):
         functional of "Edit Settings" page without including ``setman.urls``
         patterns into root URLConf module.
         """
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
-        urlpatterns = patterns('setman.views',
-            url(r'^revert/$', 'revert', name='setman_settings_revert'),
-        )
+        urlpatterns = [
+            url(r'^revert/$', revert, name='setman_settings_revert'),
+        ]
         urlpatterns += super(SettingsAdmin, self).get_urls()
 
         return urlpatterns

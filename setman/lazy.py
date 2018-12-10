@@ -6,12 +6,10 @@ except RuntimeError:
     pass
 
 from django.core.cache import cache
-
+from django.apps import apps
 from expiringdict import ExpiringDict
 
-from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
-
 
 __all__ = ('LazySettings', )
 
@@ -81,7 +79,7 @@ class LazySettings(object):
         available setting from configuration definition file if any.
         """
         if name.startswith('_'):
-            return self._safe_super_method('__getattr__', name)
+            return self._safe_super_method('__getattribute__', name)
 
         from_cache = self._cache.get(name, None)
 
@@ -139,8 +137,6 @@ class LazySettings(object):
         if CACHE_KEY in cache:
             cache.delete(CACHE_KEY)
 
-    #@threaded_cached_property_with_ttl(
-    #    ttl=getattr(django_settings, 'SETMAN_PROPERTY_CACHE_TIMEOUT', 30))
     @property
     def _custom(self):
         """
@@ -161,6 +157,8 @@ class LazySettings(object):
         """
         Do not read any settings before post_syncdb signal is called.
         """
+        Settings = apps.get_model('setman', 'Settings')
+
         try:
             return Settings.objects.get()
         except Settings.DoesNotExist:
@@ -172,7 +170,6 @@ class LazySettings(object):
         ``AttributeError``.
         """
         klass = self.__class__
-
         try:
             method = getattr(super(klass, self), method)
         except AttributeError:
@@ -180,6 +177,6 @@ class LazySettings(object):
                 klass.__name__,
                 args[0] if method.endswith('attr__') else method
             )
-            raise AttributeError('%r object has no attribute %r' % args)
+            AttributeError('%r object has no attribute %r' % args)
         else:
             return method(*args, **kwargs)
