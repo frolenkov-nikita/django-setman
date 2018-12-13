@@ -28,7 +28,7 @@ setup(
         'setman',
         'setman.management',
         'setman.management.commands',
-        'setman.migrations',
+#        'setman.migrations',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
