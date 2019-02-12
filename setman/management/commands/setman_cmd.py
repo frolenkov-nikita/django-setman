@@ -1,6 +1,6 @@
 import logging
 from optparse import make_option
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
 from setman.models import Settings
 from setman.utils import AVAILABLE_SETTINGS, is_settings_container
@@ -50,7 +50,7 @@ class Command(NoArgsCommand):
 
             print >> self.stdout, ''
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         """
         Do all necessary things.
         """
