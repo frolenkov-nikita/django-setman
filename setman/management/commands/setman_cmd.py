@@ -10,16 +10,27 @@ DEFAULT_ACTION = 'check_setman'
 logger = logging.getLogger('setman')
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     """
     """
     help_text = 'Check setman configuration or create Settings instance with '\
                 'default values.'
-    option_list = NoArgsCommand.option_list + (
-        make_option('-d', '--default-values', action='store_true',
-            default=False, dest='default_values',
-            help='Store default values to Settings model.'),
-    )
+
+    def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('-d',
+                            '--default-values',
+                            action='store_true',
+                            default=False,
+                            dest='default_values',
+                            help='Store default values to Settings model.')
+
+        # Named (optional) arguments
+        parser.add_argument('--delete',
+                            action='store_true',
+                            dest='delete',
+                            default=False,
+                            help='Delete poll instead of closing it')
 
     def check_setman(self, verbosity):
         """
