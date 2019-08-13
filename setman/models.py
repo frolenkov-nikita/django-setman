@@ -75,7 +75,7 @@ class Settings(models.Model):
         values = getattr(AVAILABLE_SETTINGS, app_name) if app_name \
                                                        else AVAILABLE_SETTINGS
 
-        for name, value in data.items():
+        for name, value in list(data.items()):
             mixed = getattr(values, name, None)
 
             # Pass if ``name`` isn't on available settings values
@@ -119,11 +119,11 @@ def validate_settings(instance, **kwargs):
     """
     try:
         instance.full_clean()
-    except ValidationError, error:
+    except ValidationError as error:
         # Dirty hack to ignore error messages raised by Django when trying to
         # re-save already existed instance (it's okay cause we didn't operate
         # with instance directly read from database, we got instance field data
         # from the cache)
-        if hasattr(error, 'message_dict') and error.message_dict.keys() == ['id']:
+        if hasattr(error, 'message_dict') and list(error.message_dict.keys()) == ['id']:
             return
         raise

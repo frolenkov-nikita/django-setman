@@ -37,29 +37,29 @@ class Command(BaseCommand):
         Check setman configuration.
         """
         if verbosity:
-            print >> self.stdout, 'Project settings:'
-            print >> self.stdout, 'Configuration definition file placed at ' \
-                                  '%r\n' % AVAILABLE_SETTINGS.path
+            print('Project settings:', file=self.stdout)
+            print('Configuration definition file placed at ' \
+                                  '%r\n' % AVAILABLE_SETTINGS.path, file=self.stdout)
 
             for setting in AVAILABLE_SETTINGS:
                 indent = ' ' * 4
 
                 if is_settings_container(setting):
-                    print >> self.stdout, '%s%r settings:' % \
-                                          (indent, setting.app_name)
-                    print >> self.stdout, '%sConfiguration definition file ' \
+                    print('%s%r settings:' % \
+                                          (indent, setting.app_name), file=self.stdout)
+                    print('%sConfiguration definition file ' \
                                           'placed at %r' % \
-                                          (indent, setting.path)
+                                          (indent, setting.path), file=self.stdout)
                     indent *= 2
 
                     for subsetting in setting:
-                        print >> self.stdout, '%s%r' % (indent, subsetting)
+                        print('%s%r' % (indent, subsetting), file=self.stdout)
 
-                    print >> self.stdout
+                    print(file=self.stdout)
                 else:
-                    print >> self.stdout, '%s%r' % (indent, setting)
+                    print('%s%r' % (indent, setting), file=self.stdout)
 
-            print >> self.stdout, ''
+            print('', file=self.stdout)
 
     def handle(self, **options):
         """
@@ -98,13 +98,13 @@ class Command(BaseCommand):
         except Settings.DoesNotExist:
             settings = Settings()
             if verbosity:
-                print >> self.stdout, 'Will create new Settings instance.'
+                print('Will create new Settings instance.', file=self.stdout)
         else:
             if verbosity:
-                print >> self.stdout, 'Settings instance already exist.'
+                print('Settings instance already exist.', file=self.stdout)
 
         store_values(settings)
         settings.save()
 
         if verbosity:
-            print >> self.stdout, 'Default values stored well!'
+            print('Default values stored well!', file=self.stdout)

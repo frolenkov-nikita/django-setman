@@ -16,14 +16,14 @@ class TestHelpers(TestCase):
         Settings.objects.create(data=TEST_SETTINGS.copy())
 
     def test_get_config(self):
-        for key, value in TEST_SETTINGS.items():
+        for key, value in list(TEST_SETTINGS.items()):
             if key == 'core':
                 continue
             self.assertEqual(get_config(key), value)
 
         self.assertRaises(ValueError, get_config, 'core')
 
-        for key, value in TEST_SETTINGS['core'].items():
+        for key, value in list(TEST_SETTINGS['core'].items()):
             self.assertEqual(get_config('core.%s' % key), value)
 
     def test_get_config_app_does_not_found(self):

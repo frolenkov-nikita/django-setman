@@ -10,7 +10,7 @@ DIRNAME = os.path.dirname(__file__)
 sys.path.append(os.path.normpath(os.path.join(DIRNAME, '..')))
 
 try:
-    import settings # Assumed to be in the same directory.
+    from . import settings # Assumed to be in the same directory.
 except ImportError:
     sys.stderr.write("Error: Can't find the file 'settings.py' in the " \
                      "directory containing %r. It appears you've customized " \

@@ -38,12 +38,12 @@ class TestSettingsModel(TestCase):
         with self.assertNumQueries(1):
             settings = Settings.objects.get()
 
-            for key, value in TEST_SETTINGS.items():
+            for key, value in list(TEST_SETTINGS.items()):
                 self.assertEqual(getattr(settings, key), value)
 
             settings = Settings.objects.get()
 
-            for key, value in TEST_SETTINGS.items():
+            for key, value in list(TEST_SETTINGS.items()):
                 self.assertEqual(getattr(settings, key), value)
 
         settings.BOOLEAN_SETTING = True
@@ -55,7 +55,7 @@ class TestSettingsModel(TestCase):
     def test_save(self):
         settings = Settings()
 
-        for key, value in TEST_SETTINGS.items():
+        for key, value in list(TEST_SETTINGS.items()):
             setattr(settings, key, value)
 
         settings.save()
@@ -64,7 +64,7 @@ class TestSettingsModel(TestCase):
         old_create_date = settings.create_date
         old_update_date = settings.update_date
 
-        for key, value in TEST_SETTINGS.items():
+        for key, value in list(TEST_SETTINGS.items()):
             self.assertEqual(getattr(settings, key), value)
 
         settings.save()

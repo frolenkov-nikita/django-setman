@@ -46,7 +46,7 @@ class SettingsForm(forms.Form):
         """
         cd = self.cleaned_data
 
-        for key, value in cd.items():
+        for key, value in list(cd.items()):
             if '.' in key:
                 app_name, key = key.split('.', 1)
                 setattr(getattr(settings, app_name), key, value)

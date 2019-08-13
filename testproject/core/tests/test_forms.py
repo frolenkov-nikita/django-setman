@@ -125,7 +125,7 @@ class TestForms(TestCase):
                            len(AVAILABLE_SETTINGS.core)
         self.assertEqual(len(form.fields), settings_counter)
 
-        for name, field in form.fields.items():
+        for name, field in list(form.fields.items()):
             if not name in SETTINGS_FIELDS and name.startswith('CHOICE_'):
                 result = forms.ChoiceField
             else:

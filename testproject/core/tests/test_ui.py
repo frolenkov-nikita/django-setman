@@ -90,7 +90,7 @@ class TestCase(DjangoTestCase):
                 self.assertContains(response, setting.help_text)
 
     def check_values(self, settings, data):
-        for name, value in data.items():
+        for name, value in list(data.items()):
             mixed = getattr(settings, name)
 
             if is_settings_container(mixed):
@@ -123,7 +123,7 @@ class TestCase(DjangoTestCase):
         data = copy.deepcopy(data)
         post_data = {}
 
-        for key, value in data.items():
+        for key, value in list(data.items()):
             if isinstance(value, dict):
                 post_data.update(self.to_post_data(value, key))
             else:
@@ -229,7 +229,7 @@ class TestUI(TestCase):
     def test_edit_settings_errors(self):
         client = self.login(TEST_USERNAME)
 
-        for key, values in WRONG_SETTINGS.items():
+        for key, values in list(WRONG_SETTINGS.items()):
             old_value = getattr(settings, key)
 
             for value in values:
@@ -282,7 +282,7 @@ class TestUI(TestCase):
         client = self.login(TEST_USERNAME)
         response = client.get(self.revert_settings_url)
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertIn(self.edit_settings_url, response['Location'])
 
         self.check_values(settings, TEST_SETTINGS)

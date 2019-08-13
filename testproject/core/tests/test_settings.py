@@ -46,7 +46,7 @@ class TestGlobalSettings(TestCase):
 
         self.assertEqual(Settings.objects.count(), 1 if prefix else 0)
 
-        for name, value in data.items():
+        for name, value in list(data.items()):
             self.assertTrue(hasattr(values, name))
             mixed = getattr(values, name)
 
@@ -69,7 +69,7 @@ class TestGlobalSettings(TestCase):
             data = TEST_SETTINGS[prefix] if prefix else TEST_SETTINGS
             values = getattr(settings, prefix) if prefix else settings
 
-            for name, value in data.items():
+            for name, value in list(data.items()):
                 mixed = getattr(values, name)
 
                 if is_settings_container(mixed):
@@ -82,7 +82,7 @@ class TestGlobalSettings(TestCase):
         instance = Settings.objects.create(data=TEST_SETTINGS)
         self.assertEqual(instance.data, TEST_SETTINGS)
 
-        for name, value in TEST_SETTINGS.items():
+        for name, value in list(TEST_SETTINGS.items()):
             self.assertEqual(getattr(instance, name), value)
 
         for name in dir(django_settings):

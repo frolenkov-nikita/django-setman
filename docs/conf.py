@@ -47,8 +47,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-setman'
-copyright = u'2011, oDesk PS'
+project = 'django-setman'
+copyright = '2011, oDesk PS'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -190,8 +190,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'django-setman.tex', u'django-setman Documentation',
-   u'oDesk PS', 'manual'),
+  ('index', 'django-setman.tex', 'django-setman Documentation',
+   'oDesk PS', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -220,8 +220,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-setman', u'django-setman Documentation',
-     [u'oDesk PS'], 1)
+    ('index', 'django-setman', 'django-setman Documentation',
+     ['oDesk PS'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -234,7 +234,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-setman', u'django-setman Documentation', u'oDesk PS',
+  ('index', 'django-setman', 'django-setman Documentation', 'oDesk PS',
    'django-setman', 'One line description of project.', 'Miscellaneous'),
 ]
 

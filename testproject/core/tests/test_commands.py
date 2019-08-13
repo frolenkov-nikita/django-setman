@@ -22,7 +22,7 @@ class TestSetmanCmd(TestCase):
         call_command('setman_cmd', verbosity=0)
         settings = Settings.objects.get()
 
-        for key, value in NEW_SETTINGS.items():
+        for key, value in list(NEW_SETTINGS.items()):
             self.assertEqual(getattr(settings, key), value)
 
     def test_store_default_values(self):
@@ -32,7 +32,7 @@ class TestSetmanCmd(TestCase):
 
         settings = Settings.objects.get()
 
-        for key, value in TEST_SETTINGS.items():
+        for key, value in list(TEST_SETTINGS.items()):
             self.assertEqual(getattr(settings, key), value)
 
         settings.data = NEW_SETTINGS
@@ -41,5 +41,5 @@ class TestSetmanCmd(TestCase):
         call_command('setman_cmd', default_values=True, verbosity=0)
         settings = Settings.objects.get()
 
-        for key, value in TEST_SETTINGS.items():
+        for key, value in list(TEST_SETTINGS.items()):
             self.assertEqual(getattr(settings, key), value)

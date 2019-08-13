@@ -6,11 +6,11 @@ import importlib
 from collections import OrderedDict as SortedDict
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
-from ConfigParser import Error as ConfigParserError, SafeConfigParser
+from configparser import Error as ConfigParserError, SafeConfigParser
 from decimal import Decimal
 
 from django import forms
@@ -89,10 +89,10 @@ class Setting(object):
         self.update(**kwargs)
 
     def __repr__(self):
-        return u'<%s: %s>' % (self.__class__.__name__, self.__unicode__())
+        return '<%s: %s>' % (self.__class__.__name__, self.__unicode__())
 
     def __unicode__(self):
-        return u'%s = %r' % (self.name, self.initial)
+        return '%s = %r' % (self.name, self.initial)
 
     @property
     def initial(self):
@@ -141,7 +141,7 @@ class Setting(object):
         restricted = ('field_klass', 'field_args', 'field_kwargs',
                       'validators')
 
-        for key, _ in kwargs.items():
+        for key, _ in list(kwargs.items()):
             if not hasattr(self, key):
                 kwargs.pop(key)
 
@@ -169,7 +169,7 @@ class Setting(object):
         if not value:
             return []
 
-        items = map(lambda item: item.strip(), value.split(','))
+        items = [item.strip() for item in value.split(',')]
         validators = []
 
         for item in items:
@@ -290,8 +290,7 @@ class ChoiceSetting(Setting):
             # If nothing found by regex, just split value by comma and
             # duplicate resulted items
             else:
-                choices = map(lambda item: (item.strip(), item.strip()),
-                              value.split(','))
+                choices = [(item.strip(), item.strip()) for item in value.split(',')]
         else:
             # Parse groups
             groups_re = re.compile(r'([^{]+){([^}]+)},?', re.M)
@@ -468,7 +467,7 @@ def data_to_setting(data, additional_types=None):
     setting = None
     setting_type = data.get('type')
 
-    all_values = globals().values() + additional_types
+    all_values = list(globals().values()) + additional_types
 
     for value in all_values:
         try:
@@ -668,7 +667,7 @@ def update_app_setting(setting, data):
     """
     kwargs = {}
 
-    for key, value in data.items():
+    for key, value in list(data.items()):
         if key == 'type':
             raise ValueError('Setting `type` attribute denied to update')
 

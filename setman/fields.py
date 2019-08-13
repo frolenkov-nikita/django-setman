@@ -58,7 +58,7 @@ def make_contrib(superclass, func=None):
     return contribute_to_class
 
 
-class SettingsField(models.TextField):
+class SettingsField(models.TextField, metaclass=SubfieldBase):
     """
     Model field that stores Python dict as JSON dump.
 
@@ -71,7 +71,6 @@ class SettingsField(models.TextField):
     would be used.
     """
     default = dict
-    __metaclass__ = SubfieldBase
     
     def __init__(self, *args, **kwargs):
         """
@@ -87,7 +86,7 @@ class SettingsField(models.TextField):
         data = {} if not value else value
         settings = settings or AVAILABLE_SETTINGS
 
-        for name, value in data.items():
+        for name, value in list(data.items()):
             if not hasattr(settings, name):
                 continue
 
@@ -122,7 +121,7 @@ class SettingsField(models.TextField):
         return simplejson.dumps(value, cls=self.encoder_cls)
 
     def to_python(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             return value
 
         if value == '':
@@ -144,7 +143,7 @@ class SettingsField(models.TextField):
     def _settings_to_python(self, data, settings=None):
         settings = settings or AVAILABLE_SETTINGS
 
-        for key, value in data.items():
+        for key, value in list(data.items()):
             if hasattr(settings, key):
                 mixed = getattr(settings, key)
 
