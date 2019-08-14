@@ -148,7 +148,9 @@ class Setting(object):
             if key in restricted:
                 kwargs.pop(key)
 
-        self.__dict__.update(kwargs)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
         self.required = force_bool(self.required)
 
     @property
