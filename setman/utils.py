@@ -25,7 +25,7 @@ DEFAULT_SETTINGS_FILENAME = 'settings.cfg'
 logger = logging.getLogger('setman')
 
 
-class ConfigParser(SafeConfigParser, object):
+class ConfigParser(SafeConfigParser):
     """
     Customize default behavior for config parser instances to support config
     files without sections at all.
@@ -89,9 +89,9 @@ class Setting(object):
         self.update(**kwargs)
 
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, self.__unicode__())
+        return '<%s: %s>' % (self.__class__.__name__, self.__str__())
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s = %r' % (self.name, self.initial)
 
     @property
@@ -448,7 +448,9 @@ class LazySettingsContainer(object):
     def __getattr__(self, attr):
         if attr.startswith('_'):
             return super(LazySettingsContainer, self).__getattr__(attr)
-        return getattr(self.data, attr)
+        data = self.__getattribute__('data')
+
+        return getattr(data, attr)
 
 
 def auth_permitted(user):
@@ -498,7 +500,7 @@ def force_bool(value):
     if isinstance(value, (bool, int)):
         return bool(value)
 
-    boolean_states = ConfigParser._boolean_states
+    boolean_states = ConfigParser.BOOLEAN_STATES
     if not value.lower() in boolean_states:
         return None
 
