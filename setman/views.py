@@ -3,7 +3,7 @@ from random import randint
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.conf import settings as django_settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
